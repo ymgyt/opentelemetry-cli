@@ -1,5 +1,5 @@
 use crate::{cli::parse_attribute, otlp::grpc::MetricsClient};
-use chrono::{DateTime, FixedOffset};
+use chrono::{DateTime, FixedOffset, Utc};
 use clap::{Args, Subcommand};
 use opentelemetry_proto::tonic::{
     collector::metrics::v1::ExportMetricsServiceRequest,
@@ -68,8 +68,9 @@ struct DataPointOptions {
     #[arg(long, value_parser = chrono::DateTime::<chrono::FixedOffset>::parse_from_rfc3339, value_name = "RFC3339", visible_alias = "start-time-unix")]
     start_time: Option<DateTime<FixedOffset>>,
     /// Metrics data point timestamp
+    /// default current time
     #[arg(long, value_parser = chrono::DateTime::<chrono::FixedOffset>::parse_from_rfc3339, value_name = "RFC3339",visible_alias = "time-unix")]
-    time: DateTime<FixedOffset>,
+    time: Option<DateTime<FixedOffset>>,
     /// examplars
     #[arg(long)]
     examplers: Vec<String>,
@@ -166,11 +167,15 @@ impl ExportGaugeCommand {
                             attributes: data_point.attributes.into_iter().map(From::from).collect(),
                             start_time_unix_nano: data_point
                                 .start_time
-                                .and_then(|dt| dt.timestamp_nanos_opt())
+                                .unwrap_or_else(|| Utc::now().into())
+                                .timestamp_nanos_opt()
                                 .unwrap_or(0)
                                 as u64,
-                            time_unix_nano: data_point.time.timestamp_nanos_opt().unwrap_or(0)
-                                as u64,
+                            time_unix_nano: data_point
+                                .time
+                                .unwrap_or_else(|| Utc::now().into())
+                                .timestamp_nanos_opt()
+                                .unwrap_or(0) as u64,
                             exemplars: vec![],
                             flags: 0,
                             value: Some(value),
