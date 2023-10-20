@@ -7,6 +7,7 @@ use opentelemetry_proto::tonic::{
         metric, number_data_point, Gauge, Metric, NumberDataPoint, ResourceMetrics, ScopeMetrics,
     },
 };
+use tracing::{debug, info};
 
 use crate::cli::ResourceOptions;
 
@@ -159,7 +160,7 @@ impl ExportGaugeCommand {
                 scope: None,
                 schema_url: schema_url.clone(),
                 metrics: vec![Metric {
-                    name: metric.name,
+                    name: metric.name.clone(),
                     description: metric.description.unwrap_or_default(),
                     unit: metric.unit.unwrap_or_default(),
                     data: Some(metric::Data::Gauge(Gauge {
@@ -193,7 +194,14 @@ impl ExportGaugeCommand {
             })
             .await?;
 
-        tracing::debug!("{response:?}");
+        debug!("{response:?}");
+
+        // should we check partial success?
+        info!(
+            instrument = "gauge",
+            name = metric.name,
+            "Metrics successfully exported"
+        );
 
         Ok(())
     }
