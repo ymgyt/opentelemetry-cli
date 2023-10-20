@@ -13,7 +13,7 @@ fn init_tracing() {
                 .with_timer(fmt::time::UtcTime::rfc_3339())
                 .with_file(false)
                 .with_line_number(false)
-                .with_target(true),
+                .with_target(false),
         )
         .with(
             EnvFilter::try_from_default_env()
