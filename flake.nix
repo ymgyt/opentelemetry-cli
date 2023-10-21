@@ -44,7 +44,7 @@
           buildInputs = [ ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [ ];
         }; 
       in {
-        packages.default = self.packages."${system}".telemetryd;
+        packages.default = self.packages."${system}".opentelemetry-cli;
         packages.opentelemetry-cli = opentelemetry-cli;
       });
 }
