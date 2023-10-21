@@ -46,11 +46,11 @@
         packages.opentelemetry-cli = opentelemetry-cli;
         apps.default = {
           type = "app";
-          program = self.packages."${system}"/bin/otel;
+          program = "${opentelemetry-cli}/bin/otel";
         };
         apps.opentelemetry-cli = {
           type = "app";
-          program = self.packages."${system}"/bin/otel;
+          program = "${opentelemetry-cli}/bin/otel";
         };
         devShells.default = pkgs.mkShell { buildInputs = [ pkgs.nixfmt ]; };
       });
