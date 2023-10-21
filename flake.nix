@@ -6,9 +6,7 @@
 
     crane = {
       url = "github:ipetkov/crane";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
+      inputs = { nixpkgs.follows = "nixpkgs"; };
     };
 
     flake-utils.url = "github:numtide/flake-utils";
@@ -42,7 +40,7 @@
           src = craneLib.cleanCargoSource (craneLib.path ./.);
 
           buildInputs = [ ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [ ];
-        }; 
+        };
       in {
         packages.default = self.packages."${system}".opentelemetry-cli;
         packages.opentelemetry-cli = opentelemetry-cli;
