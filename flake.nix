@@ -54,5 +54,6 @@
           type = "app";
           program = self.packages."${system}"/bin/otel;
         };
+        devShells.default = pkgs.mkShell { buildInputs = [ pkgs.nixfmt ]; };
       });
 }
