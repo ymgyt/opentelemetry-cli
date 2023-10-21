@@ -46,10 +46,13 @@
       in {
         packages.default = self.packages."${system}".opentelemetry-cli;
         packages.opentelemetry-cli = opentelemetry-cli;
-        apps.default = self.packages."${system}".opentelemetry-cli;
+        apps.default = {
+          type = "app";
+          program = self.packages."${system}"/bin/otel;
+        };
         apps.opentelemetry-cli = {
           type = "app";
-          program = self.pavkages."${system}"/bin/otel;
+          program = self.packages."${system}"/bin/otel;
         };
       });
 }
