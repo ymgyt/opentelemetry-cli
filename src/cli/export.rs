@@ -1,12 +1,12 @@
 mod log;
 mod metrics;
 
-use crate::otlp::grpc::MetricsClient;
+use crate::otlp::grpc::{LogsClient, MetricsClient};
 use clap::{Args, Subcommand};
 
 use crate::cli::ResourceOptions;
 
-use self::metrics::ExportMetricsContext;
+use self::{log::ExportLogsContext, metrics::ExportMetricsContext};
 
 /// Export telemetry data.
 #[derive(Args, Debug)]
@@ -44,7 +44,11 @@ impl ExportCommand {
                 let ctx = ExportMetricsContext { client, resources };
                 metrics.run(ctx).await
             }
-            ExportTelemetryCommand::Logs(logs) => logs.run().await,
+            ExportTelemetryCommand::Logs(logs) => {
+                let client = LogsClient::connect(endpoint).await?;
+                let ctx = ExportLogsContext { client, resources };
+                logs.run(ctx).await
+            }
         }
     }
 }

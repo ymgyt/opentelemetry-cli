@@ -1,8 +1,10 @@
 mod export;
 
+use std::sync::OnceLock;
+
 use clap::{Args, Parser, Subcommand};
 use opentelemetry_proto::tonic::{
-    common::v1::{any_value, AnyValue, KeyValue},
+    common::v1::{any_value, AnyValue, InstrumentationScope, KeyValue},
     resource::v1::Resource,
 };
 use tracing::debug;
@@ -77,6 +79,18 @@ fn parse_attribute(s: &str) -> Result<Attribute, String> {
         }),
         _ => Err("expect key:value format for attribute".to_string()),
     }
+}
+
+/// Return crate instrumentation scope
+fn instrumentation_scope() -> &'static InstrumentationScope {
+    static INSTRUMENT_SCOPE: OnceLock<InstrumentationScope> = OnceLock::new();
+
+    INSTRUMENT_SCOPE.get_or_init(|| InstrumentationScope {
+        name: env!("CARGO_PKG_NAME").to_owned(),
+        version: env!("CARGO_PKG_VERSION").to_owned(),
+        attributes: Vec::new(),
+        dropped_attributes_count: 0,
+    })
 }
 
 impl App {
