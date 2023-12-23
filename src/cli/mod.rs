@@ -75,7 +75,7 @@ fn parse_attribute(s: &str) -> Result<Attribute, String> {
             key: key.to_string(),
             value: value.to_string(),
         }),
-        _ => Err(format!("expect key:value format for attribute")),
+        _ => Err("expect key:value format for attribute".to_string()),
     }
 }
 
