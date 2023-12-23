@@ -1,3 +1,4 @@
+mod log;
 mod metrics;
 
 use crate::otlp::grpc::MetricsClient;
@@ -25,6 +26,8 @@ pub(super) struct ExportCommand {
 enum ExportTelemetryCommand {
     #[command(alias = "metric")]
     Metrics(metrics::ExportMetricsCommand),
+    #[command(alias = "log")]
+    Logs(log::ExportLogsCommand),
 }
 
 impl ExportCommand {
@@ -41,6 +44,7 @@ impl ExportCommand {
                 let ctx = ExportMetricsContext { client, resources };
                 metrics.run(ctx).await
             }
+            ExportTelemetryCommand::Logs(logs) => logs.run().await,
         }
     }
 }
