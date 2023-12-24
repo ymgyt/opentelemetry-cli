@@ -34,6 +34,7 @@ struct LogRecordOptions {
     severity_text: String,
     /// numerical value of the severity
     /// (https://opentelemetry.io/docs/specs/otel/logs/data-model/#field-severitynumber)
+    /// TRACE(1), INFO(9), WARN(13), ERROR(17), FATAL(21)
     #[arg(long)]
     severity_number: i32,
     /// The set of key/value pairs that uniquely identify the timeseries from where this data point belongs
