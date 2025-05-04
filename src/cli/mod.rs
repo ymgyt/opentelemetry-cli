@@ -30,7 +30,7 @@ enum Command {
 
 #[derive(Args, Debug, Clone)]
 #[command(next_help_heading = "Resource")]
-struct ResourceOptions {
+pub struct ResourceOptions {
     /// Entity from which telemetry data produced.
     /// key:value format expected (ex. service.name:foo)
     /// For a more detailed explanation, see https://opentelemetry.io/docs/instrumentation/js/resources/
