@@ -3,47 +3,58 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-
-    crane = {
-      url = "github:ipetkov/crane";
-      inputs = { nixpkgs.follows = "nixpkgs"; };
-    };
-
     flake-utils.url = "github:numtide/flake-utils";
-
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
-      };
-    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, crane, rust-overlay }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [ (import rust-overlay) ];
+        pkgs = import nixpkgs { inherit system; };
+
+        cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
+
+        opentelemetry-cli = pkgs.rustPlatform.buildRustPackage {
+          pname = "opentelemetry-cli";
+          version = cargoToml.package.version;
+
+          src = ./.;
+
+          cargoLock = {
+            lockFile = ./Cargo.lock;
+          };
+
+          nativeBuildInputs = with pkgs; [
+            pkg-config
+          ];
+
+          buildInputs =
+            with pkgs;
+            [
+              openssl
+            ]
+            ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
+              pkgs.darwin.apple_sdk.frameworks.Security
+              pkgs.darwin.apple_sdk.frameworks.SystemConfiguration
+            ];
+
+          meta = with pkgs.lib; {
+            description = "OpenTelemetry utility CLI";
+            homepage = "https://github.com/ymgyt/opentelemetry-cli";
+            license = licenses.mit;
+            maintainers = [ ];
+          };
         };
-
-        rustToolchain = pkgs.rust-bin.stable.latest.default;
-
-        craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
-
-        # Tell crane Cargo.toml path to inspect package name and version
-        crate = craneLib.crateNameFromCargoToml { cargoToml = ./Cargo.toml; };
-
-        opentelemetry-cli = craneLib.buildPackage {
-          inherit (crate) pname version;
-          src = craneLib.cleanCargoSource (craneLib.path ./.);
-
-          buildInputs = [ ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [ ];
-        };
-      in {
-        packages.default = self.packages."${system}".opentelemetry-cli;
+      in
+      {
+        packages.default = opentelemetry-cli;
         packages.opentelemetry-cli = opentelemetry-cli;
+
         apps.default = {
           type = "app";
           program = "${opentelemetry-cli}/bin/otel";
@@ -52,6 +63,13 @@
           type = "app";
           program = "${opentelemetry-cli}/bin/otel";
         };
-        devShells.default = pkgs.mkShell { buildInputs = [ pkgs.nixfmt ]; };
-      });
+
+        devShells.default = pkgs.mkShell {
+
+          nativeBuildInputs = with pkgs; [
+            pkg-config
+          ];
+        };
+      }
+    );
 }

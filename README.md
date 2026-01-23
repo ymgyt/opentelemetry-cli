@@ -4,7 +4,7 @@ opentelemetry-cli(`otel`) is a utility cli that provides functionality related t
 
 ## Install
 
-### Cargo 
+### Cargo
 
 ```sh
 cargo install opentelemetry-cli
@@ -26,7 +26,7 @@ By default, otel sends data to `http://localhost:4317` in grpc.
 
 ```sh
 otel export metrics gauge \
-  --name system.cpu.temerature \
+  --name system.cpu.temperature \
   --description "cpu temperature" \
   --unit Cel \
   --value-as-double 30.0 \

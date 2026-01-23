@@ -1,5 +1,0 @@
-[tasks.fmt]
-description = "Run nix formatter"
-script = '''
-nu -c "fd --extension nix . | lines | each { nixfmt $in }"
-'''

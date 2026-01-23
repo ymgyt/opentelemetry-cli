@@ -51,9 +51,9 @@ struct DataPointOptions {
     /// default current time
     #[arg(long, value_parser = chrono::DateTime::<chrono::FixedOffset>::parse_from_rfc3339, value_name = "RFC3339",visible_alias = "time-unix")]
     time: Option<DateTime<FixedOffset>>,
-    /// examplars
+    /// exemplars
     #[arg(long)]
-    examplers: Vec<String>,
+    exemplers: Vec<String>,
 }
 
 /// Export gauge data

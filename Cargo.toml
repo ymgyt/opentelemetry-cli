@@ -1,24 +1,24 @@
 [package]
-name = "opentelemetry-cli"
-version = "0.1.0"
-edition = "2021"
-license = "MIT"
 description = "OpenTelemetry utility cli"
-repository = "https://github.com/ymgyt/opentelemetry-cli"
-readme = "README.md"
-keywords = ["opentelemetry", "cli"]
+edition     = "2021"
+keywords    = ["opentelemetry", "cli"]
+license     = "MIT"
+name        = "opentelemetry-cli"
+readme      = "README.md"
+repository  = "https://github.com/ymgyt/opentelemetry-cli"
+version     = "0.1.0"
 
 [[bin]]
 name = "otel"
 path = "src/main.rs"
 
 [dependencies]
-anyhow = "1.0.75"
-chrono = { version = "0.4.31", default-features = false, features = ["std", "clock"] }
-clap = { version = "4.4.6", features  = ["derive", "wrap_help"] }
-opentelemetry-proto = { version = "0.4.0", features = ["gen-tonic","gen-tonic-messages", "metrics", "logs"] }
-tokio = { version = "1.33.0", features = ["rt-multi-thread", "macros"] }
+anyhow              = "1.0.75"
+chrono              = { version = "0.4.31", default-features = false, features = ["std", "clock"] }
+clap                = { version = "4.4.6", features = ["derive", "wrap_help"] }
+opentelemetry-proto = { version = "0.4.0", features = ["gen-tonic", "gen-tonic-messages", "metrics", "logs"] }
+tokio               = { version = "1.33.0", features = ["rt-multi-thread", "macros"] }
 # Same version with opentelemetry-proto
-tonic = "0.9.0"
-tracing = "0.1.39"
-tracing-subscriber = { version = "0.3.17", features = ["smallvec", "fmt", "ansi", "std", "env-filter", "time"], default-features = false }
+tonic              = "0.9.0"
+tracing            = "0.1.44"
+tracing-subscriber = { version = "0.3.22", features = ["smallvec", "fmt", "ansi", "std", "env-filter", "time"], default-features = false }
