@@ -27,7 +27,6 @@ fn init_tracing() {
 async fn main() {
     init_tracing();
 
-    let _app = cli::parse();
     if let Err(err) = cli::parse().run().await {
         error!("{err:?}");
         std::process::exit(1);

@@ -33,12 +33,12 @@ enum Command {
 pub struct ResourceOptions {
     /// Entity from which telemetry data produced.
     /// key:value format expected (ex. service.name:foo)
-    /// For a more detailed explanation, see https://opentelemetry.io/docs/instrumentation/js/resources/
+    /// For a more detailed explanation, see <https://opentelemetry.io/docs/instrumentation/js/resources/>
     #[arg(long, short = 'r', global = true, value_parser = parse_attribute)]
     resources: Vec<Attribute>,
 
     /// Telemetry schema url
-    /// For a more detailed explanation, see https://opentelemetry.io/docs/specs/otel/schemas/
+    /// For a more detailed explanation, see <https://opentelemetry.io/docs/specs/otel/schemas/>
     #[arg(long, global = true)]
     schema_url: Option<String>,
 }
@@ -67,13 +67,15 @@ impl ResourceOptions {
             attributes: self.resources.iter().cloned().map(From::from).collect(),
 
             dropped_attributes_count: 0,
+            // Should we support ?
+            entity_refs: Vec::new(),
         }
     }
 }
 
 fn parse_attribute(s: &str) -> Result<Attribute, String> {
-    match s.splitn(2, ':').collect::<Vec<&str>>().as_slice() {
-        [key, value] => Ok(Attribute {
+    match s.split_once(':') {
+        Some((key, value)) => Ok(Attribute {
             key: key.to_string(),
             value: value.to_string(),
         }),

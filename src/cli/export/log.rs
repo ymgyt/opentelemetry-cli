@@ -30,6 +30,7 @@ struct LogRecordOptions {
     #[arg(long)]
     trace_flags: Option<u32>,
     /// (also known as log level) original string representation of the severity as it is known at the source
+    // TODO: severity 関連を使いやすくする
     #[arg(long)]
     severity_text: String,
     /// numerical value of the severity
@@ -43,6 +44,15 @@ struct LogRecordOptions {
     /// A value containing the body of the log record
     #[arg(long)]
     body: String,
+
+    #[arg(long)]
+    /// A unique identifier of event category/type.
+    /// All events with the same event_name are expected to conform to the same
+    /// schema for both their attributes and their body.
+    /// Recommended to be fully qualified and short (no longer than 256 characters).
+    /// Presence of event_name on the log record identifies this record
+    /// as an event.
+    event_name: Option<String>,
 }
 
 /// Common input for export logs operation
@@ -53,7 +63,7 @@ pub struct ExportLogsContext {
 
 impl ExportLogsCommand {
     pub async fn run(self, mut ctx: ExportLogsContext) -> anyhow::Result<()> {
-        let Self { log_record } = self;
+        let Self { mut log_record } = self;
 
         let schema_url = ctx.resources.schema_url.take().unwrap_or_default();
 
@@ -72,6 +82,7 @@ impl ExportLogsCommand {
             trace_id: Vec::new(),
             // TODO: how to convert to Vec<u8> ?
             span_id: Vec::new(),
+            event_name: log_record.event_name.take().unwrap_or_default(),
         };
 
         let scope_logs = ScopeLogs {
