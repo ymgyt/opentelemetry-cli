@@ -124,6 +124,9 @@ impl ExportGaugeCommand {
                     name: metric.name.clone(),
                     description: metric.description.unwrap_or_default(),
                     unit: metric.unit.unwrap_or_default(),
+                    // TODO: support metadata
+                    metadata: Vec::new(),
+                    // TODO: support every variants
                     data: Some(metric::Data::Gauge(Gauge {
                         data_points: vec![NumberDataPoint {
                             attributes: data_point.attributes.into_iter().map(From::from).collect(),
